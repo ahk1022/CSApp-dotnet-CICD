@@ -40,8 +40,8 @@ jobs:
           username: ${{ secrets.EMAIL_USERNAME }}
           password: ${{ secrets.EMAIL_PASSWORD }}
           subject: "❌ Build Failed - ASP.Net Core WebApp"
-          to: "ahk3983@gmail.com"
-          from: "alihassank1022@gmail.com"
+          to: "alihassank1022@gmail.com"
+          from: "alihassan.octacer@gmail.com"
           body: |
             The build job has failed for branch: ${{ github.ref }}
             Repository: ${{ github.repository }}
@@ -72,7 +72,7 @@ jobs:
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'webappnew'
+          app-name: 'dotnet-demo-webapp'
           slot-name: 'Production'
           package: .
 
@@ -87,11 +87,12 @@ jobs:
           username: ${{ secrets.EMAIL_USERNAME }}
           password: ${{ secrets.EMAIL_PASSWORD }}
           subject: "✅ Deployment Successful - ASP.Net Core WebApp"
-          to: "ahk3983@gmail.com"
-          from: "alihassank1022@gmail.com"
+          to: "alihassank1022@gmail.com"
+          from: "alihassan.octacer@gmail.com"
           body: |
             The deployment has succeeded 🚀
             App: webappnew
             Repository: ${{ github.repository }}
             Commit: ${{ github.sha }}
+
 
