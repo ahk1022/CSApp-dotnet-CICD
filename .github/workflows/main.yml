@@ -1,5 +1,3 @@
-name: Build and deploy 
-
 on:
   workflow_dispatch:
 
@@ -29,10 +27,9 @@ jobs:
           name: .net-app
           path: ${{env.DOTNET_ROOT}}/myapp
 
-    # 🔴 Send failure email if build fails
-    if: failure()
-    step:
+      # 🔴 Send failure email if build fails
       - name: Send email on failure
+        if: failure()
         uses: dawidd6/action-send-mail@v3
         with:
           server_address: smtp.gmail.com
@@ -76,10 +73,9 @@ jobs:
           slot-name: 'Production'
           package: .
 
-    # ✅ Send success email if everything passes
-    if: success()
-    step:
+      # ✅ Send success email if everything passes
       - name: Send email on success
+        if: success()
         uses: dawidd6/action-send-mail@v3
         with:
           server_address: smtp.gmail.com
@@ -94,5 +90,3 @@ jobs:
             App: webappnew
             Repository: ${{ github.repository }}
             Commit: ${{ github.sha }}
-
-
