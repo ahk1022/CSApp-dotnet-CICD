@@ -1,4 +1,4 @@
-name: Build and deploy ASP.Net Core app to Azure Web App - webappnew
+name: Build and deploy 
 
 on:
   workflow_dispatch:
@@ -40,8 +40,8 @@ jobs:
           username: ${{ secrets.EMAIL_USERNAME }}
           password: ${{ secrets.EMAIL_PASSWORD }}
           subject: "❌ Build Failed - ASP.Net Core WebApp"
-          to: "team@example.com"
-          from: "ci-bot@example.com"
+          to: "ahk3983@gmail.com"
+          from: "alihassank1022@gmail.com"
           body: |
             The build job has failed for branch: ${{ github.ref }}
             Repository: ${{ github.repository }}
@@ -87,10 +87,11 @@ jobs:
           username: ${{ secrets.EMAIL_USERNAME }}
           password: ${{ secrets.EMAIL_PASSWORD }}
           subject: "✅ Deployment Successful - ASP.Net Core WebApp"
-          to: "team@example.com"
-          from: "ci-bot@example.com"
+          to: "ahk3983@gmail.com"
+          from: "alihassank1022@gmail.com"
           body: |
             The deployment has succeeded 🚀
             App: webappnew
             Repository: ${{ github.repository }}
             Commit: ${{ github.sha }}
+
