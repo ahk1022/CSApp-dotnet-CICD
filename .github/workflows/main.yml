@@ -1,0 +1,96 @@
+name: Build and deploy ASP.Net Core app to Azure Web App - webappnew
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    permissions:
+      contents: read # Required for actions/checkout
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up .NET Core
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.x'
+
+      - name: Build with dotnet
+        run: dotnet build --configuration Release
+
+      - name: dotnet publish
+        run: dotnet publish -c Release -o "${{env.DOTNET_ROOT}}/myapp"
+
+      - name: Upload artifact for deployment job
+        uses: actions/upload-artifact@v4
+        with:
+          name: .net-app
+          path: ${{env.DOTNET_ROOT}}/myapp
+
+    # 🔴 Send failure email if build fails
+    if: failure()
+    step:
+      - name: Send email on failure
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: "❌ Build Failed - ASP.Net Core WebApp"
+          to: "team@example.com"
+          from: "ci-bot@example.com"
+          body: |
+            The build job has failed for branch: ${{ github.ref }}
+            Repository: ${{ github.repository }}
+            Commit: ${{ github.sha }}
+            Please check the Actions logs for details.
+
+  deploy:
+    runs-on: windows-latest
+    needs: build
+    permissions:
+      id-token: write # Required for Azure login
+      contents: read
+
+    steps:
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v4
+        with:
+          name: .net-app
+      
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID }}
+
+      - name: Deploy to Azure Web App
+        id: deploy-to-webapp
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: 'webappnew'
+          slot-name: 'Production'
+          package: .
+
+    # ✅ Send success email if everything passes
+    if: success()
+    step:
+      - name: Send email on success
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: "✅ Deployment Successful - ASP.Net Core WebApp"
+          to: "team@example.com"
+          from: "ci-bot@example.com"
+          body: |
+            The deployment has succeeded 🚀
+            App: webappnew
+            Repository: ${{ github.repository }}
+            Commit: ${{ github.sha }}
